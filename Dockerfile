@@ -12,6 +12,4 @@ FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/lockmgr /lockmgr
 
-RUN mkdir -p /tmp
-
 ENTRYPOINT [ "/lockmgr" ]

@@ -154,7 +154,7 @@ func main() {
 		workflow := flag.Arg(1)
 		id, err = createLock(workflow)
 		fmt.Println(id)
-		ioutil.WriteFile("/tmp/result", []byte(id), 0644)
+		ioutil.WriteFile("/result", []byte(id), 0644)
 		break
 
 	case "get":
@@ -163,7 +163,7 @@ func main() {
 		if err == nil {
 			locJSON, _ := json.Marshal(lock)
 			fmt.Print(string(locJSON))
-			ioutil.WriteFile("/tmp/result", locJSON, 0644)
+			ioutil.WriteFile("/result", locJSON, 0644)
 		}
 		break
 
