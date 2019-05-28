@@ -8,7 +8,7 @@ The manager expects the following REST API to be exposed by a lock manager:
 
 ### Create a lock
 
-```html
+```http
 POST /lock HTTP/1.1
 Content-Type: application/json
 
