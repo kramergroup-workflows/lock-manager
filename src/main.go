@@ -20,13 +20,14 @@ type Lock struct {
 	ID         string    `json:"id"`
 	Status     string    `json:"status"`
 	Workflow   string    `json:"workflow"`
+	Namespace  string    `json:"namespace"`
 	Created    time.Time `json:"created"`
 	LastChange time.Time `json:"lastChange"`
 }
 
 var endpointPtr = flag.String("api-endpoint", os.Getenv("API_ENDPOINT"), "The API endpoint URL (defaults to $API_ENDPOINT env variable)")
 
-func createLock(workflow string) (string, error) {
+func createLock(workflow string, namespace string) (string, error) {
 
 	url, err := url.Parse(*endpointPtr)
 	if err != nil {
@@ -34,7 +35,10 @@ func createLock(workflow string) (string, error) {
 		return "", err
 	}
 
-	locJSON, err := json.Marshal(Lock{Workflow: workflow})
+	locJSON, err := json.Marshal(Lock{
+		Workflow:  workflow,
+		Namespace: namespace,
+	})
 
 	// Build the request
 	req, err := http.NewRequest("POST", url.String(), bytes.NewBuffer(locJSON))
@@ -124,7 +128,7 @@ func getLock(id string) (Lock, error) {
 }
 
 func printUsage() {
-	fmt.Println("lock-manager [--api-endpoint api-url] {create workflow|release id|delete id}")
+	fmt.Println("lock-manager [--api-endpoint api-url] {create workflow namespace|release id|delete id}")
 }
 
 func main() {
@@ -152,7 +156,12 @@ func main() {
 
 	case "create":
 		workflow := flag.Arg(1)
-		id, err = createLock(workflow)
+		namespace := "default"
+		if len(flag.Args()) > 2 {
+			namespace = flag.Arg(2)
+		}
+
+		id, err = createLock(workflow, namespace)
 		fmt.Println(id)
 		ioutil.WriteFile("/result", []byte(id), 0644)
 		break
